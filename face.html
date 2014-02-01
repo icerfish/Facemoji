@@ -3,7 +3,7 @@
 <!-- Adapted to work with the getUserMedia API using code from http://wesbos.com/html5-video-face-detection-canvas-javascript/ -->
 	<head>
 		<meta charset="utf-8">
-		<title>HTML5 Face Detection - JavaScript getUserMedia API and Groucho Marx glasses!</title>
+		<title>Facemoji</title>
 		<style>
 body {
 	font-family: sans-serif;
@@ -63,6 +63,9 @@ body {
 	}
 }());
 
+var lastComp;
+var emojiNumber = Math.floor((Math.random()*32));
+
 var App = {
 	start: function(stream) {
 		App.video.addEventListener('canplay', function() {
@@ -110,7 +113,7 @@ var App = {
 			ctx = App.context,
 			backCtx = App.backContext,
 			m = 4,
-			w = 4,
+			w = 20,
 			i,
 			comp;
 		
@@ -128,15 +131,30 @@ var App = {
 		if (comp.length) {
 			App.comp = comp;
 		}
-		
-		for (i = App.comp.length; i--; ) {
-			ctx.drawImage(App.glasses, (App.comp[i].x - w / 2) * m, (App.comp[i].y - w / 2) * m, (App.comp[i].width + w) * m, (App.comp[i].height + w) * m);
+
+
+		// console.log(JSON.stringify(App.comp[0]));
+
+		if(lastComp != App.comp) {
+			for (i = App.comp.length; i--; ) {
+
+				ctx.drawImage(App.emoji[emojiNumber], (App.comp[i].x - w / 2) * m, (App.comp[i].y - w / 2) * m, (App.comp[i].width + w) * m, (App.comp[i].height + w) * m);
+			}
+			lastComp = App.comp;
+		} else {
+			emojiNumber = Math.floor((Math.random()*32));
 		}
+
 	}
 };
 
-App.glasses = new Image();
-App.glasses.src = 'glasses.png';
+App.emoji = new Array();
+
+for(var i = 0; i < 33; i ++){
+	App.emoji[i] = new Image();
+	App.emoji[i].src = '/emojis/'+i+'.png';
+}
+
 
 App.init = function() {
 	App.video = document.createElement('video');
